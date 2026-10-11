@@ -42,16 +42,32 @@ pip install -r requirements.txt
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
 
+## Brief Implementation Summary
+
+I built a pet scheduling application that allows pet owners to track their daily schedule of tasks for each pet. Owners can add or remove pets, plan their daily tasks such as grooming or walking, and account for any constraints or scheduling conflicts. There are four main classes for Owner, Pet, Task, and Scheduler. The owner owns pets and has preferences, pets need tasks, and the scheduler considers the owner's preferences and schedule. Beyond these four main classes, there are helper classes such as priority, tasktype, frequency, preferences and schedule.
+
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+The CLI output is below with a daily schedule for each pet. It also includes the full daily schedule for all pets under one owner.
 
 ```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+Daily plan for Goldie (Golden Retriever):
+08:00 — Morning walk (30 min) [priority: high]
+09:00 — Breakfast (10 min) [priority: high]
+17:30 — Brushing (20 min) [priority: low]
+
+Daily plan for Buddy (German Shepherd):
+08:30 — Morning meds (5 min) [priority: high]
+14:00 — Afternoon walk (45 min) [priority: medium]
+18:00 — Dinner (10 min) [priority: high]
+
+Today's schedule (all pets):
+08:00 - Goldie: Morning walk (30 min) [priority: high]
+08:30 - Buddy: Morning meds (5 min) [priority: high]
+09:00 - Goldie: Breakfast (10 min) [priority: high]
+14:00 - Buddy: Afternoon walk (45 min) [priority: medium]
+17:30 - Goldie: Brushing (20 min) [priority: low]
+18:00 - Buddy: Dinner (10 min) [priority: high]
 ```
 
 ## 🧪 Testing PawPal+
