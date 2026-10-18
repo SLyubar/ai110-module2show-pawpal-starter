@@ -45,12 +45,22 @@ Claude identified missing relationships, overlapping methods, and design issues 
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+
+The scheduler considers time, priority as well as the owner's availibility and the duration of each task. The task duration has to add up to the owner's time available and never exceed it. Tasks that are complete are skipped. In terms of priority, if the available time is limited then higher priority tasks win. If there is a tie, then the earlier start time is chosen followed by the shorter duration task.
+
 - How did you decide which constraints mattered most?
+
+I evaluated Claude's implementation suggestions and went with what made the most logical sense. Priority is a big driver for resolving scheduling conflicts.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
+
+I described the tradeoffs above. If there is time contention, higher priority tasks take precedence. This can result in one high priority tasks that takes a long time crowding out multiple medium priority tasks.
+
 - Why is that tradeoff reasonable for this scenario?
+
+This is the first iteration of the app. There is no user feedback, so it is reasonable to deploy an easier implementation in the first version. Furthermore, the owner decides which tasks are high priority. The app simply incoporates those tags to resolve time conflicts. Adding complexity may not match the owner's decision-making process.
 
 ---
 
