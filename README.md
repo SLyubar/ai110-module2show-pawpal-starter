@@ -72,19 +72,26 @@ Today's schedule (all pets):
 
 ## 🧪 Testing PawPal+
 
+The below command runs the full test suite of 53 tests. They comprehensively cover happy path test cases and edge cases. The tests evaluate functionality related to tasks, pets, sorting, recurrence, conflicts, filtering, preferences, and scheduling.
+
 ```bash
 # Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python -m pytest
 ```
 
+```
 Sample test output:
+======================== test session starts ====================
+platform win32 -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
+plugins: anyio-4.15.1, platformdirs-4.13.0
+collected 53 items                                                                              
 
+tests\test_pawpal.py..............................         [100%]
+
+==================== 53 passed in 0.74s =========================
 ```
-# Paste your pytest output here
-```
+
+Confidence Level: ⭐⭐⭐⭐⬛
 
 ## 📐 Smarter Scheduling
 

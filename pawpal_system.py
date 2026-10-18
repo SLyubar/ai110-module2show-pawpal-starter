@@ -27,7 +27,30 @@ class Frequency(Enum):
 
 @dataclass
 class Preferences:
-    """Placeholder for owner preferences (e.g. preferred times, limits)."""
+    """Owner constraints the Scheduler respects when building a schedule.
+
+    Every field is optional; a field left as None imposes no constraint.
+    - max_daily_minutes: cap on total scheduled minutes (the Scheduler uses
+      the smaller of this and its own time_available).
+    - earliest / latest: the hours the owner is available. A timed task must
+      start at or after `earliest` and finish by `latest`. Tasks without a
+      start time are never excluded.
+    """
+    max_daily_minutes: Optional[int] = None
+    earliest: Optional[time] = None
+    latest: Optional[time] = None
+
+    def allows(self, task: "Task") -> bool:
+        """True if the task fits inside the owner's available hours."""
+        if task.start_time is None:
+            return True
+        if self.earliest is not None and task.start_time < self.earliest:
+            return False
+        if self.latest is not None:
+            latest = self.latest.hour * 60 + self.latest.minute
+            if task.start_minutes + task.duration > latest:
+                return False
+        return True
 
 
 @dataclass
@@ -264,12 +287,19 @@ class Scheduler:
 
         Only the total duration is checked: overlapping tasks are not removed
         (see find_conflicts()), and the result isn't guaranteed to be the
-        best possible fit.
+        best possible fit. The owner's preferences, if any, cap the minutes
+        and drop timed tasks outside the owner's available hours.
         """
+        prefs = self.owner.preferences or Preferences()
         remaining = self.time_available
+        if prefs.max_daily_minutes is not None:
+            remaining = min(remaining, prefs.max_daily_minutes)
         chosen: List[Task] = []
         today = date.today()
-        pending = [t for t in self.get_tasks() if not t.completed and t.due_date <= today]
+        pending = [
+            t for t in self.get_tasks()
+            if not t.completed and t.due_date <= today and prefs.allows(t)
+        ]
         for task in self.sort_tasks(pending):
             if task.duration <= remaining:
                 chosen.append(task)
