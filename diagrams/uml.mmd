@@ -1,15 +1,107 @@
 classDiagram
-    %% Replace the placeholders below with your actual classes, attributes, methods, and relationships.
-    %% Keep this file updated so it matches your final implementation.
-
-    class ClassName {
-        +type attribute
-        +method() returnType
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
     }
 
-    class AnotherClass {
-        +type attribute
-        +method() returnType
+    class TaskType {
+        <<enumeration>>
+        WALK
+        FEED
+        MEDS
+        GROOM
+        OTHER
     }
 
-    ClassName --> AnotherClass : relationship
+    class Frequency {
+        <<enumeration>>
+        ONCE
+        DAILY
+        WEEKLY
+    }
+
+    class Preferences {
+        +int max_daily_minutes
+        +time earliest
+        +time latest
+        +allows(task) bool
+    }
+
+    class Owner {
+        +String name
+        +List~Pet~ pets
+        +Preferences preferences
+        +add_pet(pet) void
+        +edit_pet(pet) void
+        +remove_pet(pet) void
+        +get_number_of_pets() int
+        +get_all_tasks() List~Task~
+    }
+
+    class Pet {
+        +String id
+        +String name
+        +int age
+        +String breed
+        +List~Task~ tasks
+        +add_task(task) void
+        +remove_task(task) void
+    }
+
+    class Task {
+        +String id
+        +String name
+        +String description
+        +int duration
+        +Priority priority
+        +TaskType task_type
+        +Frequency frequency
+        +time start_time
+        +date due_date
+        +bool completed
+        +Pet pet
+        +/time end_time
+        +/int start_minutes
+        +overlaps(other) bool
+        +next_occurrence() Task
+        +mark_complete() Task
+    }
+
+    class Schedule {
+        +List~Task~ tasks
+        +/int total_duration
+    }
+
+    class Scheduler {
+        +Owner owner
+        +int time_available
+        +get_tasks() List~Task~
+        +sort_tasks(tasks, sort_by) List~Task~
+        +filter_tasks(pet, completed, task_type, priority) List~Task~
+        +next_up(now) Task
+        +schedule() Schedule
+        +daily_plan(pet) String
+        +find_conflicts(tasks) List~String~
+        +add_task(pet, task) List~String~
+        +remove_task(pet, task) void
+        -_conflict_pairs(tasks) List~tuple~
+        -_describe_conflict(a, b)$ String
+        -_require_owned(pet) void
+    }
+
+    Owner "1" --> "0..*" Pet : owns
+    Owner "1" --> "0..1" Preferences : has
+    Pet "1" --> "0..*" Task : needs
+    Task "0..*" --> "0..1" Pet : for
+    Task --> Priority
+    Task --> TaskType
+    Task --> Frequency
+    Task ..> Task : next_occurrence() creates
+    Task ..> Pet : mark_complete() adds next occurrence to
+    Preferences ..> Task : allows() checks hours of
+    Scheduler "1" --> "1" Owner : reads get_all_tasks() from
+    Scheduler ..> Preferences : schedule() honors owner's
+    Scheduler ..> Schedule : produces
+    Schedule "1" --> "0..*" Task : contains

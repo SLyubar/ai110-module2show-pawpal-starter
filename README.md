@@ -72,7 +72,7 @@ Today's schedule (all pets):
 
 ## 🧪 Testing PawPal+
 
-The below command runs the full test suite of 53 tests. They comprehensively cover happy path test cases and edge cases. The tests evaluate functionality related to tasks, pets, sorting, recurrence, conflicts, filtering, preferences, and scheduling.
+The command below runs the full test suite of 53 tests. They comprehensively cover happy path test cases and edge cases. The tests evaluate functionality related to tasks, pets, sorting, recurrence, conflicts, filtering, preferences, and scheduling.
 
 ```bash
 # Run the full test suite:
@@ -104,12 +104,71 @@ Confidence Level: ⭐⭐⭐⭐⬛
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+### Main UI features
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+Run `streamlit run app.py`. The page is organized top to bottom:
+
+| Section | What you can do |
+|---------|-----------------|
+| **Owner / Preferences** | Set your name, a daily minutes cap and your available hours. |
+| **Add a Pet** | Add, edit or remove pets (name, age, breed). |
+| **Schedule a Task** | Add tasks (pet, title, duration, priority, type, frequency, start time), then edit, complete or remove them. Filter the list by pet, status, type or priority, and sort by priority, time or duration. |
+| **Build Schedule** | Enter the minutes you have and generate today's plan, with metrics, skipped tasks and a per-pet daily plan. |
+
+### Example workflow
+
+1. **Add a pet:** enter Mochi, 3, Shiba Inu, then click **Add pet**.
+2. **Schedule tasks:** add "Morning walk" (20 min, 08:00), then "Bath" (30 min, 08:10).
+3. **Read the warning:** the second task is still added, but a yellow warning says the two overlap, and the **Current tasks** banner counts the conflict.
+4. **Sort and filter:** sort by time or priority, or filter to one pet. **Next up** shows the next pending task.
+5. **Complete a daily task:** click **Mark complete**. A new copy appears due tomorrow.
+6. **View today's schedule:** click **Generate schedule**. Tasks are picked by priority until the time runs out, shown in clock order, and anything left out is listed under **Not scheduled** with a reason.
+
+### Scheduler behaviors shown
+
+- **Sorting:** by priority, start time or duration. Tasks with no start time go last.
+- **Filtering:** any mix of pet, status, type and priority.
+- **Conflict warnings:** overlapping tasks are flagged for the same or different pets. Back-to-back tasks are not.
+- **Recurring tasks:** completing a daily or weekly task creates the next one.
+- **Time budget and preferences:** the plan fits your minutes and available hours.
+
+### Sample CLI output
+
+`python main.py` runs the same logic without the UI (output trimmed):
+
+```text
+Sorted by time:
+  08:00 Goldie Morning walk     30 min high   walk  todo
+  08:30 Buddy  Morning meds      5 min high   meds  done
+  08:30 Buddy  Morning meds      5 min high   meds  todo
+  09:00 Goldie Breakfast        10 min high   feed  todo
+  14:00 Buddy  Afternoon walk   45 min medium walk  todo
+  17:30 Goldie Brushing         20 min low    groom todo
+  18:00 Buddy  Dinner           10 min high   feed  todo
+
+Filter: high priority, not completed, sorted by time
+  08:00 Goldie Morning walk     30 min high   walk  todo
+  08:30 Buddy  Morning meds      5 min high   meds  todo
+  09:00 Goldie Breakfast        10 min high   feed  todo
+  18:00 Buddy  Dinner           10 min high   feed  todo
+
+Next up after 10:00: 14:00 Buddy: Afternoon walk
+
+Today's schedule (all pets):
+08:00 - Goldie: Morning walk (30 min) [priority: high]
+09:00 - Goldie: Breakfast (10 min) [priority: high]
+14:00 - Buddy: Afternoon walk (45 min) [priority: medium]
+17:30 - Goldie: Brushing (20 min) [priority: low]
+18:00 - Buddy: Dinner (10 min) [priority: high]
+
+Recurring tasks:
+  completed Goldie: Morning walk (daily) -> next due 2026-10-19 (1 day(s) from today)
+  completed Goldie: Brushing (weekly) -> next due 2026-10-25 (7 day(s) from today)
+
+Conflict detection:
+  existing tasks: no conflicts
+  Warning (different pets, 2026-10-18): Buddy's 'Afternoon walk' (14:00-14:45) overlaps Goldie's 'Vet call' (14:15-14:45)
+  Warning (same pet, 2026-10-18): Goldie's 'Vet call' (14:15-14:45) overlaps Goldie's 'Bath' (14:30-14:50)
+```
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
